@@ -29,6 +29,7 @@ public class CreateDevice {
         @Size(min = 3, max=10, message="길이는 3~10자리 사이만 가능합니다.")
         private String qrcode;
         private ActiveStatus activeStatus;
+        private DeleteStatus deleteStatus;
 
     }
 

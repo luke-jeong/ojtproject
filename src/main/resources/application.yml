@@ -2,11 +2,8 @@ spring:
   h2:
     console:
       enable: true
-#  datasource:
-#    url: jdbc:mariadb://localhost:3306/mytest
-#    driver-class-name: org.mariadb.jdbc.Driver
-#    username: root
-#    password: root
+
+
 
   jpa:
     show_sql: true

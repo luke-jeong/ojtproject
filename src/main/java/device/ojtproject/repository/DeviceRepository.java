@@ -13,7 +13,7 @@ public interface DeviceRepository extends JpaRepository<Device, Long>{
 
     Optional<Device> findBySerialNumber(Long serialNumber);
 
-    List<Device> findDevicesByStatusEquals(DeleteStatus deleteStatus);
+    List<Device> findDevicesByDeleteStatusEquals(DeleteStatus deleteStatus);
 
 }
 

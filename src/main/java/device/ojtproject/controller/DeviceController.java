@@ -1,15 +1,14 @@
 package device.ojtproject.controller;
 
 
-import device.ojtproject.dto.CreateDevice;
-import device.ojtproject.dto.DeviceDetailDto;
-import device.ojtproject.dto.DeviceDto;
-import device.ojtproject.dto.EditDevice;
+import device.ojtproject.dto.*;
+import device.ojtproject.exception.DeviceException;
 import device.ojtproject.service.DeviceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -68,6 +67,19 @@ public class DeviceController {
             @PathVariable Long serialNumber
     ){
         return deviceService.deleteDevice(serialNumber);
+    }
+
+    @ExceptionHandler(DeviceException.class)
+    public DeviceErrorResponse handleException(
+            DeviceException e,
+            HttpServletRequest request
+    ){
+        log.error("errorCode:{}, url:{}, message:{}",
+                e.getDeviceErrorCode(), request.getRequestURI(), e.getDetailMessage());
+        return DeviceErrorResponse.builder()
+                .errorCode(e.getDeviceErrorCode())
+                .errorMessage(e.getDetailMessage())
+                .build();
     }
 
 }

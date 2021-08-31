@@ -8,7 +8,6 @@ import device.ojtproject.dto.DeviceDetailDto;
 import device.ojtproject.dto.DeviceDto;
 import device.ojtproject.dto.EditDevice;
 import device.ojtproject.exception.DeviceException;
-import device.ojtproject.repository.DeleteDeviceRepository;
 import device.ojtproject.repository.DeviceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,7 +22,6 @@ import static device.ojtproject.exception.DeviceErrorCode.*;
 @RequiredArgsConstructor
 public class DeviceService {
     private final DeviceRepository deviceRepository;
-    private final DeleteDeviceRepository deleteDeviceRepository;
 
     @Transactional
     public CreateDevice.Response createDevice (CreateDevice.Request request){
@@ -56,7 +54,7 @@ public class DeviceService {
 
 
     public List<DeviceDto> getAllNormalDevices() {
-        return deviceRepository.findDevicesByStatusEquals(DeleteStatus.NORMAL)
+        return deviceRepository.findDevicesByDeleteStatusEquals(DeleteStatus.NORMAL)
                 .stream().map(DeviceDto::fromEntity)
                 .collect(Collectors.toList());
     }
