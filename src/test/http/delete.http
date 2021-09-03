@@ -1,2 +1,2 @@
-DELETE http://localhost:8080/device/detail/111222
+DELETE http://localhost:8080/device/delete/111222
 Accept: application/json

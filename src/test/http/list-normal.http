@@ -1,2 +1,2 @@
-GET http://localhost:8080/device/devices/normal
+GET http://localhost:8080/device/devices?activeStatus=active
 Accept: application/json

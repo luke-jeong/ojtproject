@@ -1,11 +1,10 @@
 package device.ojtproject.dto;
 
 import device.ojtproject.domain.ActiveStatus;
-import device.ojtproject.domain.DeleteStatus;
+import device.ojtproject.domain.DiscardStatus;
 import device.ojtproject.domain.Device;
 import lombok.*;
 
-import javax.persistence.Entity;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -21,7 +20,7 @@ public class CreateDevice {
     public static class Request{
         @NotNull
         @Min(1) @Max(999999)
-        private Long serialNumber;
+        private String serialNumber;
         @NotNull
         @Size(min = 3, max=10, message="길이는 3~10자리 사이만 가능합니다.")
         private String macAddress;
@@ -29,7 +28,7 @@ public class CreateDevice {
         @Size(min = 3, max=10, message="길이는 3~10자리 사이만 가능합니다.")
         private String qrcode;
         private ActiveStatus activeStatus;
-        private DeleteStatus deleteStatus;
+        private DiscardStatus discardStatus;
 
     }
 
@@ -38,11 +37,11 @@ public class CreateDevice {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Response{
-        private Long serialNumber;
+        private String serialNumber;
         private String macAddress;
         private String qrcode;
         private ActiveStatus activeStatus;
-        private DeleteStatus deleteStatus;
+        private DiscardStatus discardStatus;
 
         public static Response fromEntity(Device device){
             return Response.builder()
@@ -50,7 +49,7 @@ public class CreateDevice {
                     .qrcode(device.getQrcode())
                     .macAddress(device.getMacAddress())
                     .activeStatus(ActiveStatus.ACTIVE)
-                    .deleteStatus(DeleteStatus.NORMAL)
+                    .discardStatus(DiscardStatus.NORMAL)
                     .build();
         }
     }

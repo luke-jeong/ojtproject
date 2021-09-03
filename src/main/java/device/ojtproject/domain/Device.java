@@ -1,5 +1,6 @@
 package device.ojtproject.domain;
 
+import device.ojtproject.dto.CreateDevice;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -15,7 +16,7 @@ public class Device {
     @Id @GeneratedValue
     private Long id;
 
-    private Long serialNumber;
+    private String serialNumber;
     private String macAddress;
     private String qrcode;
 
@@ -23,6 +24,9 @@ public class Device {
     private ActiveStatus activeStatus;//활성화&비활성화 여부
 
     @Enumerated(EnumType.STRING)
-    private DeleteStatus deleteStatus;
+    private DiscardStatus discardStatus;
+
+
+
 
 }

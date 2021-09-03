@@ -1,7 +1,7 @@
 package device.ojtproject.service;
 
 import device.ojtproject.domain.ActiveStatus;
-import device.ojtproject.domain.DeleteStatus;
+import device.ojtproject.domain.DiscardStatus;
 import device.ojtproject.domain.Device;
 import device.ojtproject.dto.CreateDevice;
 import device.ojtproject.dto.DeviceDetailDto;
@@ -23,18 +23,23 @@ import static device.ojtproject.exception.DeviceErrorCode.*;
 public class DeviceService {
     private final DeviceRepository deviceRepository;
 
+    //----------------------------생성
     @Transactional
     public CreateDevice.Response createDevice (CreateDevice.Request request){
         validateCreateDeviceRequest(request);
-        Device device = Device.builder()
+
+        return CreateDevice.Response.fromEntity(
+                deviceRepository.save(createDeviceFromRequest(request)));
+    }
+
+    private Device createDeviceFromRequest(CreateDevice.Request request){
+        return Device.builder()
                 .serialNumber(request.getSerialNumber())
                 .qrcode(request.getQrcode())
                 .macAddress(request.getMacAddress())
                 .activeStatus(ActiveStatus.ACTIVE)
-                .deleteStatus(DeleteStatus.NORMAL)
+                .discardStatus(DiscardStatus.NORMAL)
                 .build();
-        deviceRepository.save(device);
-        return CreateDevice.Response.fromEntity(device);
     }
 
     private void validateCreateDeviceRequest(CreateDevice.Request request) {
@@ -53,8 +58,11 @@ public class DeviceService {
 
 
 
+    //----------------------------------------조회
+
+
     public List<DeviceDto> getAllNormalDevices() {
-        return deviceRepository.findDevicesByDeleteStatusEquals(DeleteStatus.NORMAL)
+        return deviceRepository.findDevicesByDiscardStatusEquals(DiscardStatus.NORMAL)
                 .stream().map(DeviceDto::fromEntity)
                 .collect(Collectors.toList());
     }
@@ -65,14 +73,22 @@ public class DeviceService {
     }
 
 
-    public DeviceDetailDto getDeviceDetailDto(Long serialNumber) {
+    public DeviceDetailDto getDeviceDetailDto(String serialNumber) {
         return deviceRepository.findBySerialNumber(serialNumber)
                 .map(DeviceDetailDto::fromEntity)
                 .orElseThrow(() -> new DeviceException(NO_SERIAL_NUMBER));
     }
 
+    public List<DeviceDto> getDeviceSearch(String serialNumber, String qrcode, String macAddress) {
+
+        return deviceRepository.findBySerialNumberContaining(serialNumber)
+                        .stream().map(DeviceDto::fromEntity)
+                        .collect(Collectors.toList());
+    }
+
+    //------------------------------수정
     @Transactional
-    public DeviceDetailDto editDevice(EditDevice.Request request, Long serialNumber) {
+    public DeviceDetailDto editDevice(EditDevice.Request request, String serialNumber) {
         validateEditDeviceRequest(request, serialNumber);
         Device device = deviceRepository.findBySerialNumber(serialNumber).orElseThrow(
                 () -> new DeviceException(NO_MEMBER)
@@ -86,7 +102,7 @@ public class DeviceService {
 
     private void validateEditDeviceRequest(
             EditDevice.Request request,
-            Long serialNumber
+            String serialNumber
     ) {
         validDeviceLevel(
                 request.getSerialNumber(),
@@ -97,20 +113,21 @@ public class DeviceService {
 
     }
 
-    private void validDeviceLevel(Long serialNumber, ActiveStatus activeStatus, String qrcode) {
+    private void validDeviceLevel(String serialNumber, ActiveStatus activeStatus, String qrcode) {
         if(serialNumber == null){
             throw new DeviceException(SERIAL_NUMBER_IS_NOT_ACCEPTABLE);}
         if(qrcode == null){
             throw new DeviceException(NO_QRCODE);}
     }
 
+    //--------------------------------------삭제
     @Transactional
-    public DeviceDetailDto deleteDevice(Long serialNumber){
+    public DeviceDetailDto discardDevice(String serialNumber){
         //NORMAL -> DELETE
         //DELETE 테이블에 상태가 저장 됨.
         Device device = deviceRepository.findBySerialNumber(serialNumber)
                 .orElseThrow(() -> new DeviceException(NO_MEMBER));
-        device.setDeleteStatus(DeleteStatus.DELETE);
+        device.setDiscardStatus(DiscardStatus.DISCARD);
 
         return DeviceDetailDto.fromEntity(device);
 

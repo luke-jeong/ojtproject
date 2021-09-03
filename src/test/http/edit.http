@@ -1,8 +1,8 @@
-PUT http://localhost:8080/device/detail/111223
+PUT http://localhost:8080/device/11115
 Content-Type: application/json
 
 {
-    "serialNumber":111222,
+    "serialNumber":11115,
     "macAddress":"luke1111",
     "qrcode":"luke",
     "activeStatus": "INACTIVE"
