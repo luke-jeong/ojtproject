@@ -1,2 +1,2 @@
-GET http://localhost:8080/devices?discardStatus=DISCARD
+GET http://localhost:8080/devices?serialNumber=4
 Accept: application/json

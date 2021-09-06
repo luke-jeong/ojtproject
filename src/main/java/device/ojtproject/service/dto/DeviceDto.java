@@ -1,14 +1,19 @@
 package device.ojtproject.service.dto;
 
+import device.ojtproject.controller.dto.DeviceRequestDto;
 import device.ojtproject.entity.ActiveStatus;
 import device.ojtproject.entity.DiscardStatus;
 import device.ojtproject.entity.Device;
 import lombok.*;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 @Getter @Setter
 @Builder @NoArgsConstructor @AllArgsConstructor
 @ToString
 public class DeviceDto {
+        private Long id;
         private String serialNumber;
         private String macAddress;
         private String qrCode;
@@ -17,13 +22,21 @@ public class DeviceDto {
 
         public static DeviceDto fromEntity(Device device){
             return DeviceDto.builder()
+                    .id(device.getId())
                     .serialNumber(device.getSerialNumber())
                     .qrCode(device.getQrCode())
                     .macAddress(device.getMacAddress())
                     .activeStatus(device.getActiveStatus())
                     .discardStatus(device.getDiscardStatus())
                     .build();
-
-
-    }
+        }
+        public static DeviceDto toDto(DeviceRequestDto deviceRequestDto){
+                return DeviceDto.builder()
+                        .serialNumber(deviceRequestDto.getSerialNumber())
+                        .macAddress(deviceRequestDto.getMacAddress())
+                        .qrCode(deviceRequestDto.getQrCode())
+                        .activeStatus(deviceRequestDto.getActiveStatus())
+                        .discardStatus(deviceRequestDto.getDiscardStatus())
+                        .build();
+        }
 }

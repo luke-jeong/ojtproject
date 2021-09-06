@@ -1,7 +1,8 @@
 package device.ojtproject.entity;
 
-import device.ojtproject.service.dto.DeviceCreateDto;
-import device.ojtproject.service.dto.DeviceSearchDto;
+import device.ojtproject.exception.DeviceErrorCode;
+import device.ojtproject.exception.DeviceException;
+import device.ojtproject.service.dto.DeviceDto;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -9,7 +10,7 @@ import javax.persistence.*;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Getter @Setter
+@Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,24 +28,38 @@ public class Device {
     @Enumerated(EnumType.STRING)
     private DiscardStatus discardStatus;
 
-    public static Device toDto(DeviceCreateDto deviceCreateDto){
-        return Device.builder()
-                .serialNumber(deviceCreateDto.getSerialNumber())
-                .qrCode(deviceCreateDto.getQrCode())
-                .macAddress(deviceCreateDto.getMacAddress())
-                .activeStatus(deviceCreateDto.getActiveStatus())
-                .discardStatus(deviceCreateDto.getDiscardStatus())
-                .build();
+    public boolean isInactive() {
+        return this.activeStatus.equals(ActiveStatus.INACTIVE);
     }
 
-    public static Device toDto(DeviceSearchDto deviceSearchDto){
-        return Device.builder()
-                .serialNumber(deviceSearchDto.getSerialNumber())
-                .qrCode(deviceSearchDto.getQrCode())
-                .macAddress(deviceSearchDto.getMacAddress())
-                .activeStatus(deviceSearchDto.getActiveStatus())
-                .discardStatus(deviceSearchDto.getDiscardStatus())
-                .build();
+    public boolean isActive() {
+        return this.activeStatus.equals(ActiveStatus.ACTIVE);
     }
+
+    public void changeToActive() {
+        if(ActiveStatus.ACTIVE.equals(this.activeStatus)) {
+            throw new DeviceException(DeviceErrorCode.ACTIVE_ERROR);
+        }
+        this.activeStatus = ActiveStatus.ACTIVE;
+    }
+
+    public boolean isDiscard() {
+        return this.discardStatus.equals(DiscardStatus.DISCARD);
+    }
+
+    public boolean isNormal() {
+        return this.discardStatus.equals(DiscardStatus.NORMAL);
+    }
+
+    public void changeToDiscard() {
+        if(DiscardStatus.NORMAL.equals(this.discardStatus)) {
+            throw new DeviceException(DeviceErrorCode.ALREADY_DISCARDED);
+        }
+
+        this.activeStatus = ActiveStatus.ACTIVE;
+    }
+
+
+
 
 }

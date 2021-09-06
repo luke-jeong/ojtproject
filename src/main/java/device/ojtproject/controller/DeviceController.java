@@ -37,34 +37,35 @@ public class DeviceController {
     //생성
     @PostMapping
     public DeviceResponseDto deviceCreate(
+            @PathVariable String serialNumber,
             @Valid @RequestBody DeviceRequestDto deviceRequestDto
     ){
         log.info("request : {}", deviceRequestDto);
-        DeviceCreateDto deviceSearch =
-                deviceService.deviceCreate(
-                        DeviceCreateDto.toDto(deviceRequestDto), deviceRequestDto);
-        return DeviceResponseDto.fromDto(deviceSearch);
+        DeviceDto createDevice = deviceService.createDevice(DeviceDto.toDto(deviceRequestDto));
+        return DeviceResponseDto.fromDto(createDevice);
+
+
     }
     //수정
     @PutMapping("/{serialNumber}")
-    public DeviceResponseDto deviceEdit(
+    public DeviceResponseDto editDevice(
             @PathVariable String serialNumber,
             @Valid @RequestBody DeviceRequestDto deviceRequestDto
     ) {
-        DeviceEditDto deviceEditDto =
-                deviceService.deviceEdit(
-                        DeviceEditDto.toDto(deviceRequestDto), serialNumber);
-        DeviceEditDto deviceEdit = deviceService.deviceEdit(deviceEditDto, serialNumber);
+        DeviceDto deviceDto =
+                deviceService.editDevice(
+                        DeviceDto.toDto(deviceRequestDto), serialNumber);
+        DeviceDto editDevice = deviceService.editDevice(deviceDto, serialNumber);
 
         log.info("GET /devices HTTP/1.1");
 
-        return DeviceResponseDto.fromDto(deviceEdit);
+        return DeviceResponseDto.fromDto(editDevice);
     }
 
 
     //삭제
     @DeleteMapping("/{serialNumber}")
-    public DeviceDetailDto deleteDevice(
+    public DeviceDto discardDevice(
             @PathVariable String serialNumber
     ){
         return deviceService.discardDevice(serialNumber);

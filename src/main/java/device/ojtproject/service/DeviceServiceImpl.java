@@ -1,12 +1,13 @@
 package device.ojtproject.service;
 
-import device.ojtproject.controller.dto.DeviceRequestDto;
 import device.ojtproject.entity.ActiveStatus;
 import device.ojtproject.entity.Device;
 import device.ojtproject.entity.DiscardStatus;
-import device.ojtproject.service.dto.*;
 import device.ojtproject.exception.DeviceException;
 import device.ojtproject.repository.DeviceRepository;
+import device.ojtproject.service.dto.DeviceDto;
+import device.ojtproject.service.dto.DeviceFactory;
+import device.ojtproject.service.dto.DeviceSearchDto;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,34 +26,30 @@ public class DeviceServiceImpl implements DeviceService{
     //----------------------------생성
     @Transactional
     @Override
-    public DeviceCreateDto deviceCreate (DeviceCreateDto deviceCreateDto, DeviceRequestDto deviceRequestDto){
-        validateCreateDeviceRequest(deviceCreateDto);
-        return DeviceCreateDto.fromEntity(
-                deviceRepository.save(Device.toDto(createDeviceFromRequest(deviceRequestDto))));
+    public DeviceDto createDevice (DeviceDto deviceDto){
+        validateCreateDeviceRequest(deviceDto);
+
+        Device device = DeviceFactory.getDevice(deviceDto);
+
+        device.changeToActive();
+
+        return DeviceDto.fromEntity(
+                deviceRepository.save(device)
+        );
     }
 
-    private DeviceCreateDto createDeviceFromRequest(DeviceRequestDto deviceRequestDto){
-        return DeviceCreateDto.builder()
-                .serialNumber(deviceRequestDto.getSerialNumber())
-                .qrCode(deviceRequestDto.getQrCode())
-                .macAddress(deviceRequestDto.getMacAddress())
-                .activeStatus(ActiveStatus.ACTIVE)
-                .discardStatus(DiscardStatus.NORMAL)
-                .build();
-    }
-
-    private void validateCreateDeviceRequest(DeviceCreateDto deviceCreateDto) {
+    private void validateCreateDeviceRequest(DeviceDto deviceDto) {
         //business validation
         validDeviceLevel(
-                deviceCreateDto.getSerialNumber(),
-                deviceCreateDto.getActiveStatus(),
-                deviceCreateDto.getQrCode()
+                deviceDto.getSerialNumber(),
+                deviceDto.getActiveStatus(),
+                deviceDto.getQrCode(),
+                deviceDto.getMacAddress()
         );
 
-        deviceRepository.findBySerialNumber(deviceCreateDto.getSerialNumber())
+        deviceRepository.findBySerialNumber(deviceDto.getSerialNumber())
                 .ifPresent((device -> {
-                    throw new DeviceException(DUPLICATED_SN);
-                }));
+                    throw new DeviceException(DUPLICATED_SN); }));
     }
 
 
@@ -60,10 +57,10 @@ public class DeviceServiceImpl implements DeviceService{
     //----------------------------------------조회
 
     @Override
-    public DeviceDetailDto getDeviceDetailDto(String serialNumber) {
+    public DeviceDto getDeviceDto(String serialNumber) {
         return deviceRepository.findBySerialNumber(serialNumber)
-                .map(DeviceDetailDto::fromEntity)
-                .orElseThrow(() -> new DeviceException(NO_SERIAL_NUMBER));
+                .map(DeviceDto::fromEntity)
+                .orElseThrow(() -> new DeviceException(NO_SERIALNUMBER));
     }
 
     @Override
@@ -82,37 +79,50 @@ public class DeviceServiceImpl implements DeviceService{
     //------------------------------수정
     @Transactional
     @Override
-    public DeviceEditDto deviceEdit(DeviceEditDto deviceEditDto, String serialNumber) {
-        validateDeviceEditRequest(deviceEditDto, serialNumber);
+    public DeviceDto editDevice(DeviceDto deviceDto, String serialNumber) {
+        validateDeviceEditRequest(deviceDto);
         Device device = deviceRepository.findBySerialNumber(serialNumber).orElseThrow(
                 () -> new DeviceException(NO_MEMBER)
         );
-        device.setSerialNumber(deviceEditDto.getSerialNumber());
-        device.setMacAddress(deviceEditDto.getMacAddress());
-        device.setQrCode(deviceEditDto.getQrCode());
-        device.setActiveStatus(deviceEditDto.getActiveStatus());
-        return DeviceEditDto.fromEntity(device);
+        device.setSerialNumber(deviceDto.getSerialNumber());
+        device.setMacAddress(deviceDto.getMacAddress());
+        device.setQrCode(deviceDto.getQrCode());
+        device.setActiveStatus(deviceDto.getActiveStatus());
+
+        device.changeToActive();
+
+
+        deviceRepository.save(device);
+
+        return DeviceDto.fromEntity(device);
     }
+
 
     private void validateDeviceEditRequest(
-            DeviceEditDto deviceEditDto,
-            String serialNumber
+            DeviceDto deviceDto
     ) {
         validDeviceLevel(
-                deviceEditDto.getSerialNumber(),
-                deviceEditDto.getActiveStatus(),
-                deviceEditDto.getQrCode()
+                deviceDto.getSerialNumber(),
+                deviceDto.getActiveStatus(),
+                deviceDto.getQrCode(),
+                deviceDto.getMacAddress()
         );
+        deviceRepository.findBySerialNumber(deviceDto.getSerialNumber())
+                .ifPresent((device -> {
+                    throw new DeviceException(DUPLICATED_SN);
+                }));
 
 
     }
 
-    private void validDeviceLevel(String serialNumber, ActiveStatus activeStatus, String qrCode) {
+    private void validDeviceLevel(String serialNumber, ActiveStatus activeStatus, String qrCode, String macAddress) {
         if(serialNumber == null){
-            throw new DeviceException(NO_SERIAL_NUMBER);}
+            throw new DeviceException(NO_SERIALNUMBER);}
         if(qrCode == null){
             throw new DeviceException(NO_QRCODE);}
-        if(activeStatus == ActiveStatus.INACTIVE){
+        if(macAddress == null){
+            throw new DeviceException(NO_MACADDRESS);}
+        if(activeStatus == null){
             throw new DeviceException(ACTIVE_ERROR);}
         }
 
@@ -120,14 +130,14 @@ public class DeviceServiceImpl implements DeviceService{
     //--------------------------------------삭제
     @Transactional
     @Override
-    public DeviceDetailDto discardDevice(String serialNumber){
+    public DeviceDto discardDevice(String serialNumber){
         //NORMAL -> DELETE
         //DELETE 테이블에 상태가 저장 됨.
         Device device = deviceRepository.findBySerialNumber(serialNumber)
                 .orElseThrow(() -> new DeviceException(NO_MEMBER));
         device.setDiscardStatus(DiscardStatus.DISCARD);
 
-        return DeviceDetailDto.fromEntity(device);
+        return DeviceDto.fromEntity(device);
 
     }
 

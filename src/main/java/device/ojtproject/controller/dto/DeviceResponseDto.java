@@ -2,9 +2,9 @@ package device.ojtproject.controller.dto;
 
 import device.ojtproject.entity.ActiveStatus;
 import device.ojtproject.entity.DiscardStatus;
-import device.ojtproject.service.dto.DeviceCreateDto;
 
-import device.ojtproject.service.dto.DeviceEditDto;
+
+import device.ojtproject.service.dto.DeviceDto;
 import device.ojtproject.service.dto.DeviceSearchDto;
 import lombok.*;
 
@@ -20,13 +20,13 @@ public class DeviceResponseDto{
     private ActiveStatus activeStatus;
     private DiscardStatus discardStatus;
 
-    public static DeviceResponseDto fromDto(DeviceCreateDto deviceCreateDto){
+    public static DeviceResponseDto fromDto(DeviceDto deviceDto){
         return DeviceResponseDto.builder()
-                .serialNumber(deviceCreateDto.getSerialNumber())
-                .qrCode(deviceCreateDto.getQrCode())
-                .macAddress(deviceCreateDto.getMacAddress())
-                .activeStatus(deviceCreateDto.getActiveStatus())
-                .discardStatus(deviceCreateDto.getDiscardStatus())
+                .serialNumber(deviceDto.getSerialNumber())
+                .qrCode(deviceDto.getQrCode())
+                .macAddress(deviceDto.getMacAddress())
+                .activeStatus(deviceDto.getActiveStatus())
+                .discardStatus(deviceDto.getDiscardStatus())
                 .build();
     }
 
@@ -40,14 +40,5 @@ public class DeviceResponseDto{
                 .build();
     }
 
-    public static DeviceResponseDto fromDto(DeviceEditDto deviceEditDtoo){
-        return DeviceResponseDto.builder()
-                .serialNumber(deviceEditDtoo.getSerialNumber())
-                .qrCode(deviceEditDtoo.getQrCode())
-                .macAddress(deviceEditDtoo.getMacAddress())
-                .activeStatus(deviceEditDtoo.getActiveStatus())
-                .discardStatus(deviceEditDtoo.getDiscardStatus())
-                .build();
-    }
 
 }

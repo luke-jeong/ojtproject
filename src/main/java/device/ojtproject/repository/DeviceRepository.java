@@ -1,5 +1,6 @@
 package device.ojtproject.repository;
 
+import device.ojtproject.entity.ActiveStatus;
 import device.ojtproject.entity.DiscardStatus;
 import device.ojtproject.entity.Device;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,7 +18,8 @@ public interface DeviceRepository extends JpaRepository<Device, String>{
     List<Device> findByQrCodeContaining (String qrCode);
     List<Device> findByMacAddressContaining (String macAddress);
 
-    List<Device> findDevicesByDiscardStatusEquals(DiscardStatus discardStatus);
+    List<Device> findByDiscardStatusEquals(DiscardStatus discardStatus);
+    List<Device> findByActiveStatusEquals(ActiveStatus activeStatus);
 
 }
 
