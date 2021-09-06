@@ -4,6 +4,6 @@ Content-Type: application/json
 {
     "serialNumber":11115,
     "macAddress":"luke1111",
-    "qrcode":"luke",
+    "qrCode":"luke",
     "activeStatus": "INACTIVE"
 }

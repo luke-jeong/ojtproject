@@ -22,10 +22,5 @@ public class DeviceControllerTest {
   /*  protected MediaType contentType =
             new MediaType(MediaType.APPLICATION_JSON)*/
 
-    @Test
-    void getAllDevices() throws Exception{
 
-        given(deviceService.getAllDevices())
-                .willReturn(DeviceObjectMother.createDeviceDto());
-    }
 }

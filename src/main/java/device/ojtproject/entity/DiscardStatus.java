@@ -1,4 +1,4 @@
-package device.ojtproject.domain;
+package device.ojtproject.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,2 +1,2 @@
-GET http://localhost:8080/device/devices?activeStatus=active
+GET http://localhost:8080/devices?discardStatus=DISCARD
 Accept: application/json

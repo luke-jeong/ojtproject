@@ -1,4 +1,4 @@
-package device.ojtproject.domain;
+package device.ojtproject.entity;
 
 public enum ActiveStatus {
     ACTIVE, INACTIVE

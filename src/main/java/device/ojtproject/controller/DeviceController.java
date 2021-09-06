@@ -1,15 +1,14 @@
 package device.ojtproject.controller;
 
 
-import device.ojtproject.domain.ActiveStatus;
-import device.ojtproject.dto.*;
-import device.ojtproject.exception.DeviceException;
+import device.ojtproject.controller.dto.DeviceRequestDto;
+import device.ojtproject.controller.dto.DeviceResponseDto;
+import device.ojtproject.service.dto.*;
 import device.ojtproject.service.DeviceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -21,42 +20,45 @@ public class DeviceController {
 //
 
     private final DeviceService deviceService;
-    //구현체로 받으면 모킹이 안되기 때문에 serviceimpl이 아니라 service를 받아야한다.
 
-//  폐기되지 않은 device 조회
+
+//  device 조회
 //  GET /devices?activateStatus=
     @GetMapping
-    public List<DeviceDto> getAllDevices(
-            @RequestParam(value = "activateStatus", required = false) ActiveStatus activeStatus,
+    public List<DeviceSearchDto> getAllDevices(
             @RequestParam(value = "serialNumber", required = false) String serialNumber,
-            @RequestParam(value = "qrcode", required = false) String qrcode,
+            @RequestParam(value = "qrCode", required = false) String qrCode,
             @RequestParam(value = "macAddress", required = false) String macAddress
-
     ) {
-
         log.info("GET /devices HTTP/1.1");
-
-        return deviceService.getDeviceSearch();
+        return deviceService.getDeviceSearch(serialNumber,qrCode,macAddress);
     }
 
     //생성
     @PostMapping
-    public CreateDevice.Response createDevices(
-            @Valid @RequestBody CreateDevice.Request request
+    public DeviceResponseDto deviceCreate(
+            @Valid @RequestBody DeviceRequestDto deviceRequestDto
     ){
-        log.info("request : {}", request);
-
-        return deviceService.createDevice(request);
+        log.info("request : {}", deviceRequestDto);
+        DeviceCreateDto deviceSearch =
+                deviceService.deviceCreate(
+                        DeviceCreateDto.toDto(deviceRequestDto), deviceRequestDto);
+        return DeviceResponseDto.fromDto(deviceSearch);
     }
     //수정
     @PutMapping("/{serialNumber}")
-    public DeviceDetailDto editDevice(
+    public DeviceResponseDto deviceEdit(
             @PathVariable String serialNumber,
-            @Valid @RequestBody EditDevice.Request request
+            @Valid @RequestBody DeviceRequestDto deviceRequestDto
     ) {
+        DeviceEditDto deviceEditDto =
+                deviceService.deviceEdit(
+                        DeviceEditDto.toDto(deviceRequestDto), serialNumber);
+        DeviceEditDto deviceEdit = deviceService.deviceEdit(deviceEditDto, serialNumber);
+
         log.info("GET /devices HTTP/1.1");
 
-        return deviceService.editDevice(request, serialNumber);
+        return DeviceResponseDto.fromDto(deviceEdit);
     }
 
 
@@ -68,18 +70,6 @@ public class DeviceController {
         return deviceService.discardDevice(serialNumber);
     }
 
-    //에러코드
-    @ExceptionHandler(DeviceException.class)
-    public DeviceErrorResponse handleException(
-            DeviceException e,
-            HttpServletRequest request
-    ){
-        log.error("errorCode:{}, url:{}, message:{}",
-                e.getDeviceErrorCode(), request.getRequestURI(), e.getDetailMessage());
-        return DeviceErrorResponse.builder()
-                .errorCode(e.getDeviceErrorCode())
-                .errorMessage(e.getDetailMessage())
-                .build();
-    }
+
 
 }

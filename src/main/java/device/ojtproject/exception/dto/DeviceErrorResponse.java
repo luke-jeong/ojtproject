@@ -1,4 +1,4 @@
-package device.ojtproject.dto;
+package device.ojtproject.exception.dto;
 
 
 import device.ojtproject.exception.DeviceErrorCode;
