@@ -31,18 +31,15 @@ public class DeviceServiceImpl implements DeviceService{
 
         Device device = DeviceFactory.getDevice(deviceDto);
 
-        device.changeToActive();
+//        device.changeToActive();
 
-        return DeviceDto.fromEntity(
-                deviceRepository.save(device)
-        );
+        return DeviceFactory.getDeviceDto(deviceRepository.save(device));
     }
 
     private void validateCreateDeviceRequest(DeviceDto deviceDto) {
         //business validation
         validDeviceLevel(
                 deviceDto.getSerialNumber(),
-                deviceDto.getActiveStatus(),
                 deviceDto.getQrCode(),
                 deviceDto.getMacAddress()
         );
@@ -84,6 +81,13 @@ public class DeviceServiceImpl implements DeviceService{
         Device device = deviceRepository.findBySerialNumber(serialNumber).orElseThrow(
                 () -> new DeviceException(NO_MEMBER)
         );
+        DeviceFactory.getDevice(deviceDto);
+        deviceRepository.save(device);
+
+        return DeviceFactory.getDeviceDto(device);
+       /* Device device = deviceRepository.findBySerialNumber(serialNumber).orElseThrow(
+                () -> new DeviceException(NO_MEMBER)
+        );
         device.setSerialNumber(deviceDto.getSerialNumber());
         device.setMacAddress(deviceDto.getMacAddress());
         device.setQrCode(deviceDto.getQrCode());
@@ -94,7 +98,7 @@ public class DeviceServiceImpl implements DeviceService{
 
         deviceRepository.save(device);
 
-        return DeviceDto.fromEntity(device);
+        return DeviceDto.fromEntity(device);*/
     }
 
 
@@ -103,7 +107,6 @@ public class DeviceServiceImpl implements DeviceService{
     ) {
         validDeviceLevel(
                 deviceDto.getSerialNumber(),
-                deviceDto.getActiveStatus(),
                 deviceDto.getQrCode(),
                 deviceDto.getMacAddress()
         );
@@ -115,15 +118,15 @@ public class DeviceServiceImpl implements DeviceService{
 
     }
 
-    private void validDeviceLevel(String serialNumber, ActiveStatus activeStatus, String qrCode, String macAddress) {
+    private void validDeviceLevel(String serialNumber, String qrCode, String macAddress) {
         if(serialNumber == null){
             throw new DeviceException(NO_SERIALNUMBER);}
         if(qrCode == null){
             throw new DeviceException(NO_QRCODE);}
         if(macAddress == null){
             throw new DeviceException(NO_MACADDRESS);}
-        if(activeStatus == null){
-            throw new DeviceException(ACTIVE_ERROR);}
+//        if(activeStatus == null){
+//            throw new DeviceException(ACTIVE_NULL_ERROR);}
         }
 
 
@@ -135,7 +138,7 @@ public class DeviceServiceImpl implements DeviceService{
         //DELETE 테이블에 상태가 저장 됨.
         Device device = deviceRepository.findBySerialNumber(serialNumber)
                 .orElseThrow(() -> new DeviceException(NO_MEMBER));
-        device.setDiscardStatus(DiscardStatus.DISCARD);
+        device.changeToDiscard();
 
         return DeviceDto.fromEntity(device);
 

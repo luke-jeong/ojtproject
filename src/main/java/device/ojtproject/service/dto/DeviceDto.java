@@ -22,7 +22,6 @@ public class DeviceDto {
 
         public static DeviceDto fromEntity(Device device){
             return DeviceDto.builder()
-                    .id(device.getId())
                     .serialNumber(device.getSerialNumber())
                     .qrCode(device.getQrCode())
                     .macAddress(device.getMacAddress())
@@ -35,8 +34,26 @@ public class DeviceDto {
                         .serialNumber(deviceRequestDto.getSerialNumber())
                         .macAddress(deviceRequestDto.getMacAddress())
                         .qrCode(deviceRequestDto.getQrCode())
-                        .activeStatus(deviceRequestDto.getActiveStatus())
-                        .discardStatus(deviceRequestDto.getDiscardStatus())
                         .build();
         }
+
+        public static Device toEntity(DeviceDto deviceDto) {
+                return Device.builder()
+                        .serialNumber(deviceDto.getSerialNumber())
+                        .macAddress(deviceDto.getMacAddress())
+                        .qrCode(deviceDto.getQrCode())
+                        .activeStatus(deviceDto.getActiveStatus())
+                        .discardStatus(deviceDto.getDiscardStatus())
+                        .build();
+        }
+
+        public static Device toEntity(DeviceSearchDto deviceSearchDto) {
+                return Device.builder()
+                        .serialNumber(deviceSearchDto.getSerialNumber())
+                        .macAddress(deviceSearchDto.getMacAddress())
+                        .qrCode(deviceSearchDto.getQrCode())
+                        .activeStatus(deviceSearchDto.getActiveStatus())
+                        .discardStatus(deviceSearchDto.getDiscardStatus())
+                        .build();
+                }
 }

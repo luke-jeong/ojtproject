@@ -23,7 +23,6 @@ public class DeviceController {
 
 
 //  device 조회
-//  GET /devices?activateStatus=
     @GetMapping
     public List<DeviceSearchDto> getAllDevices(
             @RequestParam(value = "serialNumber", required = false) String serialNumber,
@@ -37,7 +36,6 @@ public class DeviceController {
     //생성
     @PostMapping
     public DeviceResponseDto deviceCreate(
-            @PathVariable String serialNumber,
             @Valid @RequestBody DeviceRequestDto deviceRequestDto
     ){
         log.info("request : {}", deviceRequestDto);

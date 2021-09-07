@@ -52,11 +52,11 @@ public class Device {
     }
 
     public void changeToDiscard() {
-        if(DiscardStatus.NORMAL.equals(this.discardStatus)) {
+        if(DiscardStatus.DISCARD.equals(this.discardStatus)) {
             throw new DeviceException(DeviceErrorCode.ALREADY_DISCARDED);
         }
 
-        this.activeStatus = ActiveStatus.ACTIVE;
+        this.discardStatus = DiscardStatus.DISCARD;
     }
 
 

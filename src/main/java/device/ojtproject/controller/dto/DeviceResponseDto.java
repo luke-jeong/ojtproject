@@ -30,15 +30,5 @@ public class DeviceResponseDto{
                 .build();
     }
 
-    public static DeviceResponseDto fromDto(DeviceSearchDto deviceSearchDto){
-        return DeviceResponseDto.builder()
-                .serialNumber(deviceSearchDto.getSerialNumber())
-                .qrCode(deviceSearchDto.getQrCode())
-                .macAddress(deviceSearchDto.getMacAddress())
-                .activeStatus(deviceSearchDto.getActiveStatus())
-                .discardStatus(deviceSearchDto.getDiscardStatus())
-                .build();
-    }
-
 
 }

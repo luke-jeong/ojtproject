@@ -15,4 +15,15 @@ public class DeviceFactory {
                 .build();
 
     }
+    public static DeviceDto getDeviceDto(Device device) {
+        return DeviceDto.builder()
+                .serialNumber(device.getSerialNumber())
+                .macAddress(device.getMacAddress())
+                .qrCode(device.getQrCode())
+                .activeStatus(device.getActiveStatus())
+                .discardStatus(device.getDiscardStatus())
+                .build();
+
+    }
+
 }
