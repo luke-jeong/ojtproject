@@ -13,7 +13,7 @@ public class DeviceTest {
 
         Assert.assertTrue(device.isInactive());
 
-        device.changeToActive();
+        device.changeToINActive();
 
         Assert.assertTrue(device.isActive());
     }
@@ -24,7 +24,7 @@ public class DeviceTest {
 
         Assert.assertTrue(device.isActive());
 
-        device.changeToActive();
+        device.changeToINActive();
 //
 //        Assert.assertTrue(device.isActive());
     }

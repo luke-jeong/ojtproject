@@ -26,4 +26,14 @@ public class DeviceFactory {
 
     }
 
+    public static DeviceSearchDto getDeviceSearchDto(Device device) {
+        return DeviceSearchDto.builder()
+                .serialNumber(device.getSerialNumber())
+                .macAddress(device.getMacAddress())
+                .qrCode(device.getQrCode())
+                .activeStatus(device.getActiveStatus())
+                .discardStatus(device.getDiscardStatus())
+                .build();
+    }
+
 }

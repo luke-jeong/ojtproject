@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -22,20 +23,23 @@ public class DeviceController {
     private final DeviceService deviceService;
 
 
-//  device 조회
+    //  device 조회
     @GetMapping
-    public List<DeviceSearchDto> getAllDevices(
+    public List<DeviceResponseDto> searchAllDevices(
             @RequestParam(value = "serialNumber", required = false) String serialNumber,
             @RequestParam(value = "qrCode", required = false) String qrCode,
             @RequestParam(value = "macAddress", required = false) String macAddress
     ) {
         log.info("GET /devices HTTP/1.1");
-        return deviceService.getDeviceSearch(serialNumber,qrCode,macAddress);
+        List<DeviceSearchDto> searchDevices = deviceService.searchDevice(serialNumber,qrCode,macAddress);
+        return searchDevices
+                .stream().map(DeviceResponseDto::fromSearchDto)
+                .collect(Collectors.toList());
     }
 
     //생성
     @PostMapping
-    public DeviceResponseDto deviceCreate(
+    public DeviceResponseDto createDevice(
             @Valid @RequestBody DeviceRequestDto deviceRequestDto
     ){
         log.info("request : {}", deviceRequestDto);
@@ -50,10 +54,9 @@ public class DeviceController {
             @PathVariable String serialNumber,
             @Valid @RequestBody DeviceRequestDto deviceRequestDto
     ) {
-        DeviceDto deviceDto =
-                deviceService.editDevice(
-                        DeviceDto.toDto(deviceRequestDto), serialNumber);
-        DeviceDto editDevice = deviceService.editDevice(deviceDto, serialNumber);
+        DeviceDto editDevice = deviceService.editDevice(
+                DeviceDto.toDto(deviceRequestDto), serialNumber
+        );
 
         log.info("GET /devices HTTP/1.1");
 
@@ -63,12 +66,21 @@ public class DeviceController {
 
     //삭제
     @DeleteMapping("/{serialNumber}")
-    public DeviceDto discardDevice(
+    public DeviceResponseDto discardDevice(
             @PathVariable String serialNumber
     ){
-        return deviceService.discardDevice(serialNumber);
+        DeviceDto discardDevice  = deviceService.discardDevice(serialNumber);
+        return DeviceResponseDto.fromDto(discardDevice);
     }
 
+    // 동작정지
+    @PutMapping("/{serialNumber}")
+    public DeviceResponseDto inactiveDevice(
+            @PathVariable String serialNumber
+    ){
+        DeviceDto inactiveDevice  = deviceService.discardDevice(serialNumber);
+        return DeviceResponseDto.fromDto(inactiveDevice);
+    }
 
 
 }

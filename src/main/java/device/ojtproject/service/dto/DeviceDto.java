@@ -21,13 +21,13 @@ public class DeviceDto {
         private DiscardStatus discardStatus;
 
         public static DeviceDto fromEntity(Device device){
-            return DeviceDto.builder()
-                    .serialNumber(device.getSerialNumber())
-                    .qrCode(device.getQrCode())
-                    .macAddress(device.getMacAddress())
-                    .activeStatus(device.getActiveStatus())
-                    .discardStatus(device.getDiscardStatus())
-                    .build();
+                return DeviceDto.builder()
+                        .serialNumber(device.getSerialNumber())
+                        .qrCode(device.getQrCode())
+                        .macAddress(device.getMacAddress())
+                        .activeStatus(device.getActiveStatus())
+                        .discardStatus(device.getDiscardStatus())
+                        .build();
         }
         public static DeviceDto toDto(DeviceRequestDto deviceRequestDto){
                 return DeviceDto.builder()
@@ -47,13 +47,5 @@ public class DeviceDto {
                         .build();
         }
 
-        public static Device toEntity(DeviceSearchDto deviceSearchDto) {
-                return Device.builder()
-                        .serialNumber(deviceSearchDto.getSerialNumber())
-                        .macAddress(deviceSearchDto.getMacAddress())
-                        .qrCode(deviceSearchDto.getQrCode())
-                        .activeStatus(deviceSearchDto.getActiveStatus())
-                        .discardStatus(deviceSearchDto.getDiscardStatus())
-                        .build();
-                }
+
 }

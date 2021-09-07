@@ -99,7 +99,16 @@ public class DeviceObjectMother {
 
 
     public static Device createActiveDevice() {
+        return Device.builder()
+                .serialNumber("1111")
+                .qrCode("lukeQR")
+                .macAddress("lukeMAC")
+                .activeStatus(ActiveStatus.ACTIVE)
+                .discardStatus(DiscardStatus.NORMAL)
+                .build();
+    }
 
+    public static Device DiscardDevice(){
         return Device.builder()
                 .serialNumber("1111")
                 .qrCode("lukeQR")

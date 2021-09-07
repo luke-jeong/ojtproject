@@ -17,39 +17,12 @@ import java.util.stream.Collectors;
 
 import static device.ojtproject.exception.DeviceErrorCode.*;
 
+
 @Service
 @AllArgsConstructor
 public class DeviceServiceImpl implements DeviceService{
 
     private final DeviceRepository deviceRepository;
-
-    //----------------------------생성
-    @Transactional
-    @Override
-    public DeviceDto createDevice (DeviceDto deviceDto){
-        validateCreateDeviceRequest(deviceDto);
-
-        Device device = DeviceFactory.getDevice(deviceDto);
-
-//        device.changeToActive();
-
-        return DeviceFactory.getDeviceDto(deviceRepository.save(device));
-    }
-
-    private void validateCreateDeviceRequest(DeviceDto deviceDto) {
-        //business validation
-        validDeviceLevel(
-                deviceDto.getSerialNumber(),
-                deviceDto.getQrCode(),
-                deviceDto.getMacAddress()
-        );
-
-        deviceRepository.findBySerialNumber(deviceDto.getSerialNumber())
-                .ifPresent((device -> {
-                    throw new DeviceException(DUPLICATED_SN); }));
-    }
-
-
 
     //----------------------------------------조회
 
@@ -61,7 +34,7 @@ public class DeviceServiceImpl implements DeviceService{
     }
 
     @Override
-    public List<DeviceSearchDto> getDeviceSearch(String serialNumber, String qrCode, String macAddress) {
+    public List<DeviceSearchDto> searchDevice(String serialNumber, String qrCode, String macAddress) {
         List<Device> devices;
         if(serialNumber != null) devices = deviceRepository.findBySerialNumberContaining(serialNumber);
         else if(qrCode != null) devices = deviceRepository.findByQrCodeContaining(qrCode);
@@ -69,8 +42,31 @@ public class DeviceServiceImpl implements DeviceService{
         else devices = deviceRepository.findAll();
 
         return devices
-                .stream().map(DeviceSearchDto::fromEntity)
+                .stream().map(DeviceFactory::getDeviceSearchDto)
                 .collect(Collectors.toList());
+    }
+
+
+    //----------------------------생성
+    @Transactional
+    @Override
+    public DeviceDto createDevice (DeviceDto deviceDto){
+        validateCreateDeviceRequest(deviceDto);
+        Device device = DeviceFactory.getDevice(deviceDto);
+        return DeviceFactory.getDeviceDto(deviceRepository.save(device));
+    }
+
+    private void validateCreateDeviceRequest(DeviceDto deviceDto) {
+        //business validation
+        /*validDeviceLevel(
+                deviceDto.getSerialNumber(),
+                deviceDto.getQrCode(),
+                deviceDto.getMacAddress()
+        );*/
+
+        deviceRepository.findBySerialNumber(deviceDto.getSerialNumber())
+                .ifPresent((device -> {
+                    throw new DeviceException(DUPLICATED_SN); }));
     }
 
     //------------------------------수정
@@ -81,35 +77,17 @@ public class DeviceServiceImpl implements DeviceService{
         Device device = deviceRepository.findBySerialNumber(serialNumber).orElseThrow(
                 () -> new DeviceException(NO_MEMBER)
         );
-        DeviceFactory.getDevice(deviceDto);
+        device.edit(DeviceFactory.getDevice(deviceDto));
         deviceRepository.save(device);
-
         return DeviceFactory.getDeviceDto(device);
-       /* Device device = deviceRepository.findBySerialNumber(serialNumber).orElseThrow(
-                () -> new DeviceException(NO_MEMBER)
-        );
-        device.setSerialNumber(deviceDto.getSerialNumber());
-        device.setMacAddress(deviceDto.getMacAddress());
-        device.setQrCode(deviceDto.getQrCode());
-        device.setActiveStatus(deviceDto.getActiveStatus());
-
-        device.changeToActive();
-
-
-        deviceRepository.save(device);
-
-        return DeviceDto.fromEntity(device);*/
     }
 
-
-    private void validateDeviceEditRequest(
-            DeviceDto deviceDto
-    ) {
-        validDeviceLevel(
+    private void validateDeviceEditRequest(DeviceDto deviceDto) {
+        /*validDeviceLevel(
                 deviceDto.getSerialNumber(),
                 deviceDto.getQrCode(),
                 deviceDto.getMacAddress()
-        );
+        );*/
         deviceRepository.findBySerialNumber(deviceDto.getSerialNumber())
                 .ifPresent((device -> {
                     throw new DeviceException(DUPLICATED_SN);
@@ -117,19 +95,6 @@ public class DeviceServiceImpl implements DeviceService{
 
 
     }
-
-    private void validDeviceLevel(String serialNumber, String qrCode, String macAddress) {
-        if(serialNumber == null){
-            throw new DeviceException(NO_SERIALNUMBER);}
-        if(qrCode == null){
-            throw new DeviceException(NO_QRCODE);}
-        if(macAddress == null){
-            throw new DeviceException(NO_MACADDRESS);}
-//        if(activeStatus == null){
-//            throw new DeviceException(ACTIVE_NULL_ERROR);}
-        }
-
-
     //--------------------------------------삭제
     @Transactional
     @Override
@@ -139,9 +104,37 @@ public class DeviceServiceImpl implements DeviceService{
         Device device = deviceRepository.findBySerialNumber(serialNumber)
                 .orElseThrow(() -> new DeviceException(NO_MEMBER));
         device.changeToDiscard();
+        deviceRepository.save(device);
 
-        return DeviceDto.fromEntity(device);
+        return DeviceFactory.getDeviceDto(device);
 
     }
+
+    //------------------------동작 정지
+    @Transactional
+    @Override
+    public DeviceDto inactiveDevice(String serialNumber){
+        //active -> inactive
+        Device device = deviceRepository.findBySerialNumber(serialNumber)
+                .orElseThrow(() -> new DeviceException(NO_MEMBER));
+        device.changeToINActive();
+        deviceRepository.save(device);
+
+        return DeviceFactory.getDeviceDto(device);
+
+    }
+
+    /// 사용 안함...
+    private void validDeviceLevel(String serialNumber, String qrCode, String macAddress) {
+        if(serialNumber == null){
+            throw new DeviceException(NO_SERIALNUMBER);}
+        if(qrCode == null){
+            throw new DeviceException(NO_QRCODE);}
+        if(macAddress == null){
+            throw new DeviceException(NO_MACADDRESS);}
+//        if(activeStatus == null){
+//            throw new DeviceException(ACTIVE_NULL_ERROR);}
+    }
+    ///?????
 
 }

@@ -28,38 +28,45 @@ public class Device {
     @Enumerated(EnumType.STRING)
     private DiscardStatus discardStatus;
 
+    public void edit(Device device){
+        //nullPointException을 피하기 위해 equals 사용시
+        //!"문자".equals(변수) 로 써야한다.
+        if(! device.getSerialNumber().equals(this.serialNumber)){
+            this.serialNumber = device.getSerialNumber();
+        }
+        if(! device.getMacAddress().equals(this.macAddress)) {
+            this.macAddress = device.getMacAddress();
+        }
+        if(! device.getQrCode().equals(this.qrCode)) {
+            this.qrCode = device.getQrCode();
+        }
+    }
+
+
     public boolean isInactive() {
         return this.activeStatus.equals(ActiveStatus.INACTIVE);
     }
-
     public boolean isActive() {
         return this.activeStatus.equals(ActiveStatus.ACTIVE);
     }
-
-    public void changeToActive() {
-        if(ActiveStatus.ACTIVE.equals(this.activeStatus)) {
+    public void changeToINActive() {
+        if(ActiveStatus.INACTIVE.equals(this.activeStatus)) {
             throw new DeviceException(DeviceErrorCode.ACTIVE_ERROR);
         }
-        this.activeStatus = ActiveStatus.ACTIVE;
+        this.activeStatus = ActiveStatus.INACTIVE;
     }
+
 
     public boolean isDiscard() {
         return this.discardStatus.equals(DiscardStatus.DISCARD);
     }
-
     public boolean isNormal() {
         return this.discardStatus.equals(DiscardStatus.NORMAL);
     }
-
     public void changeToDiscard() {
         if(DiscardStatus.DISCARD.equals(this.discardStatus)) {
             throw new DeviceException(DeviceErrorCode.ALREADY_DISCARDED);
         }
-
         this.discardStatus = DiscardStatus.DISCARD;
     }
-
-
-
-
 }

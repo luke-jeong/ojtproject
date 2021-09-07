@@ -10,6 +10,7 @@ public interface DeviceService {
     public DeviceDto getDeviceDto(String serialNumber);
     public DeviceDto editDevice(DeviceDto deviceDto, String serialNumber);
     public DeviceDto discardDevice(String serialNumber);
-    public List<DeviceSearchDto> getDeviceSearch(String serialNumber, String qrCode, String macAddress);
+    public DeviceDto inactiveDevice(String serialNumber);
+    public List<DeviceSearchDto> searchDevice(String serialNumber, String qrCode, String macAddress);
 //
 }
