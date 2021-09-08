@@ -74,13 +74,13 @@ public class DeviceController {
     }
 
     // 동작정지
-    @PutMapping("/{serialNumber}")
+    /*@PutMapping("/{serialNumber}")
     public DeviceResponseDto inactiveDevice(
             @PathVariable String serialNumber
     ){
-        DeviceDto inactiveDevice  = deviceService.discardDevice(serialNumber);
+        DeviceDto inactiveDevice  = deviceService.inactiveDevice(serialNumber);
         return DeviceResponseDto.fromDto(inactiveDevice);
-    }
+    }*/
 
 
 }

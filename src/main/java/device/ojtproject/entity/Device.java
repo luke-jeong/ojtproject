@@ -31,14 +31,14 @@ public class Device {
     public void edit(Device device){
         //nullPointException을 피하기 위해 equals 사용시
         //!"문자".equals(변수) 로 써야한다.
-        if(! device.getSerialNumber().equals(this.serialNumber)){
-            this.serialNumber = device.getSerialNumber();
+        if(! device.getSerialNumber().equals(serialNumber)){
+            serialNumber = device.getSerialNumber();
         }
-        if(! device.getMacAddress().equals(this.macAddress)) {
-            this.macAddress = device.getMacAddress();
+        if(! device.getMacAddress().equals(macAddress)) {
+            macAddress = device.getMacAddress();
         }
-        if(! device.getQrCode().equals(this.qrCode)) {
-            this.qrCode = device.getQrCode();
+        if(! device.getQrCode().equals(qrCode)) {
+            qrCode = device.getQrCode();
         }
     }
 

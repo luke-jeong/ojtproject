@@ -1,6 +1,8 @@
 package device.ojtproject.service;
 
 import device.ojtproject.DeviceObjectMother;
+import device.ojtproject.controller.dto.DeviceResponseDto;
+import device.ojtproject.entity.ActiveStatus;
 import device.ojtproject.entity.Device;
 import device.ojtproject.entity.DiscardStatus;
 import device.ojtproject.service.dto.*;
@@ -58,32 +60,11 @@ public class DeviceServiceTest {
     }
     @Test
     public void DeviceSearch(){
-        given(deviceRepository.findBySerialNumberContaining(anyString()))
+        given(deviceRepository.findAll())
                 .willReturn(DeviceObjectMother.createDevices());
         List<DeviceSearchDto> deviceSearch = deviceService.searchDevice(null,null,null);
         assertEquals(3, deviceSearch.size());
     }
-
-
-
-    /*@Test
-    public void DeviceCreate(){
-        //given
-        ArgumentCaptor<Device> captor =
-                ArgumentCaptor.forClass(Device.class);
-        //when
-        DeviceDto device = deviceService.createDevice(
-                DeviceObjectMother.deviceCreateDto()
-
-        );
-        //then
-        verify(deviceRepository, times(1)).save(captor.capture());
-        Device savedDevice = captor.getValue();
-        assertEquals("1111", savedDevice.getSerialNumber());
-        assertEquals("lukeQR1", savedDevice.getQrCode());
-        assertEquals("lukeMAC1", savedDevice.getMacAddress());
-
-    }*/
 
     @Test
     public void DeviceEdit(){
@@ -95,26 +76,42 @@ public class DeviceServiceTest {
         assertEquals("5555", editDevice.getSerialNumber());
         assertEquals("newQR", editDevice.getQrCode());
         assertEquals("newMac", editDevice.getMacAddress());
-
-    }
-
-    @Test
-    public void createTest() {
-        given(deviceRepository.findBySerialNumber(anyString()))
-                .willReturn(Optional.of(DeviceObjectMother.createDevice()));
-
-        DeviceDto deviceDto = deviceService.createDevice(DeviceObjectMother.deviceCreateDto());
-        assertEquals("1111", deviceDto.getSerialNumber());
     }
 
     @Test
     public void DiscardTest() {
+        given(deviceRepository.findAll())
+                .willReturn(DeviceObjectMother.createDevices());
+
         given(deviceRepository.findBySerialNumber(anyString()))
                 .willReturn(Optional.of(DeviceObjectMother.DiscardDevice()));
-        deviceService.discardDevice("1111");
-        List<Device> dicardedDevices = deviceRepository.findByDiscardStatusEquals(DiscardStatus.DISCARD);
 
-        assertEquals(1, dicardedDevices.size());
-        ////
+        //초기 입력값
+        Device device = DeviceObjectMother.createDevices().get(0);
+        assertEquals(DiscardStatus.NORMAL, device.getDiscardStatus());
+
+        //discard 된 값
+        DeviceDto deviceDto = deviceService.discardDevice(device.getSerialNumber());
+        assertEquals(DiscardStatus.DISCARD, deviceDto.getDiscardStatus());
+    }
+
+
+    @Test
+    public void DeviceCreate(){
+        //given
+        given(deviceRepository.findBySerialNumber(anyString()))
+                .willReturn(Optional.empty());
+        ArgumentCaptor<Device> captor =
+                ArgumentCaptor.forClass(Device.class);
+        //when
+        DeviceDto createDevice = deviceService.createDevice(DeviceObjectMother.deviceCreateDto());
+
+        //then
+        verify(deviceRepository, times(1)).save(captor.capture());
+        Device savedDevice = captor.getValue();
+        assertEquals("1111", savedDevice.getSerialNumber());
+        assertEquals("lukeQR1", savedDevice.getQrCode());
+        assertEquals("lukeMAC1", savedDevice.getMacAddress());
+
     }
 }

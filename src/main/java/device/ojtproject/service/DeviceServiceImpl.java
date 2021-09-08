@@ -53,7 +53,8 @@ public class DeviceServiceImpl implements DeviceService{
     public DeviceDto createDevice (DeviceDto deviceDto){
         validateCreateDeviceRequest(deviceDto);
         Device device = DeviceFactory.getDevice(deviceDto);
-        return DeviceFactory.getDeviceDto(deviceRepository.save(device));
+        deviceRepository.save(device);
+        return DeviceFactory.getDeviceDto(device);
     }
 
     private void validateCreateDeviceRequest(DeviceDto deviceDto) {
@@ -79,6 +80,8 @@ public class DeviceServiceImpl implements DeviceService{
         );
         device.edit(DeviceFactory.getDevice(deviceDto));
         deviceRepository.save(device);
+        //Device savedDevice = deviceRepository.save(device);
+
         return DeviceFactory.getDeviceDto(device);
     }
 
@@ -88,10 +91,6 @@ public class DeviceServiceImpl implements DeviceService{
                 deviceDto.getQrCode(),
                 deviceDto.getMacAddress()
         );*/
-        deviceRepository.findBySerialNumber(deviceDto.getSerialNumber())
-                .ifPresent((device -> {
-                    throw new DeviceException(DUPLICATED_SN);
-                }));
 
 
     }
@@ -107,7 +106,6 @@ public class DeviceServiceImpl implements DeviceService{
         deviceRepository.save(device);
 
         return DeviceFactory.getDeviceDto(device);
-
     }
 
     //------------------------동작 정지
