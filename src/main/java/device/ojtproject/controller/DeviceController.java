@@ -65,7 +65,7 @@ public class DeviceController {
 
 
     //삭제
-    @DeleteMapping("/{serialNumber}")
+    @DeleteMapping("/Discard/{serialNumber}")
     public DeviceResponseDto discardDevice(
             @PathVariable String serialNumber
     ){
@@ -74,13 +74,13 @@ public class DeviceController {
     }
 
     // 동작정지
-    /*@PutMapping("/{serialNumber}")
+    @DeleteMapping("/activation/{serialNumber}")
     public DeviceResponseDto inactiveDevice(
             @PathVariable String serialNumber
     ){
         DeviceDto inactiveDevice  = deviceService.inactiveDevice(serialNumber);
         return DeviceResponseDto.fromDto(inactiveDevice);
-    }*/
+    }
 
 
 }

@@ -2,6 +2,7 @@ package device.ojtproject.controller;
 
 import device.ojtproject.DeviceObjectMother;
 import device.ojtproject.service.DeviceService;
+import device.ojtproject.service.DeviceServiceImpl;
 import device.ojtproject.service.dto.DeviceDto;
 import device.ojtproject.service.dto.DeviceSearchDto;
 import org.junit.Test;
@@ -20,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import static org.assertj.core.internal.bytebuddy.matcher.ElementMatchers.is;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
@@ -33,12 +35,17 @@ public class DeviceControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private DeviceService deviceService;
+    private DeviceServiceImpl deviceService;
 
     protected MediaType contentType =
             new MediaType(MediaType.APPLICATION_JSON.getType(),
                     MediaType.APPLICATION_JSON.getSubtype(),
                     StandardCharsets.UTF_8);
 
+    @Test
+    void findAllDevices() throws Exception{
+        given(deviceService.searchDevice(anyString(),anyString(),anyString()))
+                .
+    }
 
 }

@@ -1,8 +1,6 @@
 package device.ojtproject.service;
 
-import device.ojtproject.entity.ActiveStatus;
 import device.ojtproject.entity.Device;
-import device.ojtproject.entity.DiscardStatus;
 import device.ojtproject.exception.DeviceException;
 import device.ojtproject.repository.DeviceRepository;
 import device.ojtproject.service.dto.DeviceDto;
@@ -15,30 +13,31 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static device.ojtproject.exception.DeviceErrorCode.*;
+import static device.ojtproject.exception.DeviceErrorCode.DUPLICATED_SN;
+import static device.ojtproject.exception.DeviceErrorCode.NO_MEMBER;
 
 
 @Service
 @AllArgsConstructor
-public class DeviceServiceImpl implements DeviceService{
+public class DeviceServiceImpl implements DeviceService {
 
     private final DeviceRepository deviceRepository;
 
     //----------------------------------------조회
 
-    @Override
+    /*@Override
     public DeviceDto getDeviceDto(String serialNumber) {
         return deviceRepository.findBySerialNumber(serialNumber)
                 .map(DeviceDto::fromEntity)
                 .orElseThrow(() -> new DeviceException(NO_SERIALNUMBER));
-    }
+    }*/
 
     @Override
     public List<DeviceSearchDto> searchDevice(String serialNumber, String qrCode, String macAddress) {
         List<Device> devices;
-        if(serialNumber != null) devices = deviceRepository.findBySerialNumberContaining(serialNumber);
-        else if(qrCode != null) devices = deviceRepository.findByQrCodeContaining(qrCode);
-        else if(macAddress != null) devices = deviceRepository.findByMacAddressContaining(macAddress);
+        if (serialNumber != null) devices = deviceRepository.findBySerialNumberContaining(serialNumber);
+        else if (qrCode != null) devices = deviceRepository.findByQrCodeContaining(qrCode);
+        else if (macAddress != null) devices = deviceRepository.findByMacAddressContaining(macAddress);
         else devices = deviceRepository.findAll();
 
         return devices
@@ -50,7 +49,7 @@ public class DeviceServiceImpl implements DeviceService{
     //----------------------------생성
     @Transactional
     @Override
-    public DeviceDto createDevice (DeviceDto deviceDto){
+    public DeviceDto createDevice(DeviceDto deviceDto) {
         validateCreateDeviceRequest(deviceDto);
         Device device = DeviceFactory.getDevice(deviceDto);
         deviceRepository.save(device);
@@ -67,7 +66,8 @@ public class DeviceServiceImpl implements DeviceService{
 
         deviceRepository.findBySerialNumber(deviceDto.getSerialNumber())
                 .ifPresent((device -> {
-                    throw new DeviceException(DUPLICATED_SN); }));
+                    throw new DeviceException(DUPLICATED_SN);
+                }));
     }
 
     //------------------------------수정
@@ -94,10 +94,11 @@ public class DeviceServiceImpl implements DeviceService{
 
 
     }
+
     //--------------------------------------삭제
     @Transactional
     @Override
-    public DeviceDto discardDevice(String serialNumber){
+    public DeviceDto discardDevice(String serialNumber) {
         //NORMAL -> DELETE
         //DELETE 테이블에 상태가 저장 됨.
         Device device = deviceRepository.findBySerialNumber(serialNumber)
@@ -111,7 +112,7 @@ public class DeviceServiceImpl implements DeviceService{
     //------------------------동작 정지
     @Transactional
     @Override
-    public DeviceDto inactiveDevice(String serialNumber){
+    public DeviceDto inactiveDevice(String serialNumber) {
         //active -> inactive
         Device device = deviceRepository.findBySerialNumber(serialNumber)
                 .orElseThrow(() -> new DeviceException(NO_MEMBER));
@@ -121,9 +122,9 @@ public class DeviceServiceImpl implements DeviceService{
         return DeviceFactory.getDeviceDto(device);
 
     }
-
+}
     /// 사용 안함...
-    private void validDeviceLevel(String serialNumber, String qrCode, String macAddress) {
+    /*private void validDeviceLevel(String serialNumber, String qrCode, String macAddress) {
         if(serialNumber == null){
             throw new DeviceException(NO_SERIALNUMBER);}
         if(qrCode == null){
@@ -133,6 +134,6 @@ public class DeviceServiceImpl implements DeviceService{
 //        if(activeStatus == null){
 //            throw new DeviceException(ACTIVE_NULL_ERROR);}
     }
-    ///?????
+    ///?????*/
 
-}
+

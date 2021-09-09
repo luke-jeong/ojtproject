@@ -7,7 +7,6 @@ import java.util.List;
 
 public interface DeviceService {
     public DeviceDto createDevice(DeviceDto deviceDto);
-    public DeviceDto getDeviceDto(String serialNumber);
     public DeviceDto editDevice(DeviceDto deviceDto, String serialNumber);
     public DeviceDto discardDevice(String serialNumber);
     public DeviceDto inactiveDevice(String serialNumber);
