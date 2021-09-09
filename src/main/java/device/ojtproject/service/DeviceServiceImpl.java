@@ -25,13 +25,6 @@ public class DeviceServiceImpl implements DeviceService {
 
     //----------------------------------------조회
 
-    /*@Override
-    public DeviceDto getDeviceDto(String serialNumber) {
-        return deviceRepository.findBySerialNumber(serialNumber)
-                .map(DeviceDto::fromEntity)
-                .orElseThrow(() -> new DeviceException(NO_SERIALNUMBER));
-    }*/
-
     @Override
     public List<DeviceSearchDto> searchDevice(String serialNumber, String qrCode, String macAddress) {
         List<Device> devices;

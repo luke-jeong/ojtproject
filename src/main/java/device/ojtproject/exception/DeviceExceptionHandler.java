@@ -2,9 +2,11 @@ package device.ojtproject.exception;
 
 import device.ojtproject.exception.dto.DeviceErrorResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 public class DeviceExceptionHandler {
 
     @ExceptionHandler(DeviceException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public DeviceErrorResponse handleException(
             DeviceException e,
             HttpServletRequest request
@@ -32,6 +35,7 @@ public class DeviceExceptionHandler {
             MethodArgumentNotValidException.class
             //size, min, max 등에서 에러 발생 시
     })
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public DeviceErrorResponse handleBadRequest(
             Exception e, HttpServletRequest request
     ){

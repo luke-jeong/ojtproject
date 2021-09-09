@@ -17,7 +17,7 @@ import javax.validation.constraints.Size;
 @ToString
 public class DeviceRequestDto {
     @NotNull
-    @Min(1) @Max(99)
+    @Size(min = 3, max=10, message="길이는 3~10자리 사이만 가능합니다.")
     private String serialNumber;
     @NotNull
     @Size(min = 3, max=10, message="길이는 3~10자리 사이만 가능합니다.")

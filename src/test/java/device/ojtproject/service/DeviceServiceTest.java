@@ -1,8 +1,6 @@
 package device.ojtproject.service;
 
 import device.ojtproject.DeviceObjectMother;
-import device.ojtproject.controller.dto.DeviceResponseDto;
-import device.ojtproject.entity.ActiveStatus;
 import device.ojtproject.entity.Device;
 import device.ojtproject.entity.DiscardStatus;
 import device.ojtproject.service.dto.*;
@@ -37,6 +35,8 @@ public class DeviceServiceTest {
     @InjectMocks
     private DeviceServiceImpl deviceService;
 
+
+    //---------------------조희
     @Test
     public void getDeviceSerialNumber() {
         given(deviceRepository.findBySerialNumberContaining(anyString()))
@@ -66,6 +66,28 @@ public class DeviceServiceTest {
         assertEquals(3, deviceSearch.size());
     }
 
+    //------------------생성
+
+    @Test
+    public void DeviceCreate(){
+        //given
+        given(deviceRepository.findBySerialNumber(anyString()))
+                .willReturn(Optional.empty());
+        ArgumentCaptor<Device> captor =
+                ArgumentCaptor.forClass(Device.class);
+        //when
+        DeviceDto createDevice = deviceService.createDevice(DeviceObjectMother.createDeviceDto());
+
+        //then
+        verify(deviceRepository, times(1)).save(captor.capture());
+        Device savedDevice = captor.getValue();
+        assertEquals("1111", savedDevice.getSerialNumber());
+        assertEquals("lukeQR1", savedDevice.getQrCode());
+        assertEquals("lukeMAC1", savedDevice.getMacAddress());
+
+    }
+
+    //--------------------수정
     @Test
     public void DeviceEdit(){
         given(deviceRepository.findBySerialNumber(anyString()))
@@ -78,6 +100,7 @@ public class DeviceServiceTest {
         assertEquals("newMac", editDevice.getMacAddress());
     }
 
+    //---------------------삭제
     @Test
     public void DiscardTest() {
         given(deviceRepository.findAll())
@@ -96,22 +119,5 @@ public class DeviceServiceTest {
     }
 
 
-    @Test
-    public void DeviceCreate(){
-        //given
-        given(deviceRepository.findBySerialNumber(anyString()))
-                .willReturn(Optional.empty());
-        ArgumentCaptor<Device> captor =
-                ArgumentCaptor.forClass(Device.class);
-        //when
-        DeviceDto createDevice = deviceService.createDevice(DeviceObjectMother.deviceCreateDto());
 
-        //then
-        verify(deviceRepository, times(1)).save(captor.capture());
-        Device savedDevice = captor.getValue();
-        assertEquals("1111", savedDevice.getSerialNumber());
-        assertEquals("lukeQR1", savedDevice.getQrCode());
-        assertEquals("lukeMAC1", savedDevice.getMacAddress());
-
-    }
 }

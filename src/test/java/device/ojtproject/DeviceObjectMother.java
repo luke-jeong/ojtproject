@@ -63,11 +63,11 @@ public class DeviceObjectMother {
                         .build());
     }
 
-    public static List<DeviceDto> createDeviceDto() {
+    /*public static List<DeviceDto> createDeviceDto() {
         return createDevices().stream()
                 .map(device -> DeviceDto.fromEntity(device))
                 .collect(Collectors.toList());
-    }
+    }*/
 
     public static List<Device> discardDevices() {
 
@@ -85,7 +85,7 @@ public class DeviceObjectMother {
                         .activeStatus(ActiveStatus.INACTIVE)
                         .build());
     }
-    public static DeviceDto deviceCreateDto(){
+    public static DeviceDto createDeviceDto(){
         return DeviceDto.builder()
                 .serialNumber("1111")
                 .qrCode("lukeQR1")
@@ -97,7 +97,25 @@ public class DeviceObjectMother {
                 .serialNumber("2222")
                 .qrCode("lukeQR1")
                 .macAddress("lukeMAC1")
+                .activeStatus(ActiveStatus.ACTIVE)
+                .discardStatus(DiscardStatus.NORMAL)
                 .build();
+    }
+    public static List<DeviceSearchDto> deviceSearchDtos(){
+        return Arrays.asList(DeviceSearchDto.builder()
+                    .serialNumber("1111")
+                    .qrCode("lukeQR1")
+                    .macAddress("lukeMAC1")
+                    .activeStatus(ActiveStatus.ACTIVE)
+                    .discardStatus(DiscardStatus.NORMAL)
+                    .build(),
+                DeviceSearchDto.builder()
+                    .serialNumber("2222")
+                    .qrCode("lukeQR2")
+                    .macAddress("lukeMAC2")
+                    .activeStatus(ActiveStatus.ACTIVE)
+                    .discardStatus(DiscardStatus.NORMAL)
+                    .build());
     }
     public static DeviceResponseDto deviceResponseDto(){
         return DeviceResponseDto.builder()
@@ -138,6 +156,16 @@ public class DeviceObjectMother {
 
     public static Device DiscardDevice(){
         return Device.builder()
+                .serialNumber("1111")
+                .qrCode("lukeQR")
+                .macAddress("lukeMAC")
+                .activeStatus(ActiveStatus.ACTIVE)
+                .discardStatus(DiscardStatus.NORMAL)
+                .build();
+    }
+
+    public static DeviceDto DiscardDeviceDto(){
+        return DeviceDto.builder()
                 .serialNumber("1111")
                 .qrCode("lukeQR")
                 .macAddress("lukeMAC")

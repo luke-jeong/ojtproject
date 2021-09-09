@@ -7,6 +7,7 @@ import device.ojtproject.service.dto.*;
 import device.ojtproject.service.DeviceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -39,6 +40,7 @@ public class DeviceController {
 
     //생성
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public DeviceResponseDto createDevice(
             @Valid @RequestBody DeviceRequestDto deviceRequestDto
     ){
@@ -74,7 +76,7 @@ public class DeviceController {
     }
 
     // 동작정지
-    @DeleteMapping("/activation/{serialNumber}")
+    @PutMapping("/activation/{serialNumber}")
     public DeviceResponseDto inactiveDevice(
             @PathVariable String serialNumber
     ){
